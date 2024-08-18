@@ -10,7 +10,7 @@ import toast, { Toaster } from 'react-hot-toast';
 import css from './App.module.css';
 
 // Опис типу даних для модального вікна
-export interface ModalData {
+interface ModalData {
   imageFullSrc: string;
   altText?: string;
 }
@@ -35,7 +35,7 @@ export default function App() {
   const [page, setPage] = useState<number>(1);
   const [topic, setTopic] = useState<string>('');
   const [loadMore, setLoadMore] = useState<boolean>(false);
-  const [totalPages, setTotalPages] = useState<number>(0);
+  const [totalPages, setTotalPages] = useState<number>(999);
   const [imageModal, setImageModal] = useState<boolean>(false);
   const [modalData, setModalData] = useState<ModalData | null>(null);
 
@@ -51,16 +51,17 @@ export default function App() {
   };
 
   const handleMoreBtn = () => {
-    setPage(prevPage => prevPage + 1);
+    setPage(page + 1);
   };
 
   const handleImageModal = (modalData: ModalData) => {
-    setImageModal(!imageModal);
+    setImageModal(true);
     setModalData(modalData);
   };
 
   const handleModalClose = () => {
-    setImageModal(!imageModal);
+    setImageModal(false);
+    setModalData(null);
   };
 
   useEffect(() => {
@@ -74,12 +75,14 @@ export default function App() {
         setLoading(true);
         setLoadMore(false);
         const { results, totalPages } = await fetchImages(topic, page);
+        console.log(results); 
 
         if (results.length === 0 && page === 1) {
           setLoadMore(false);
           toast.error('Incorrect input, try something else!', { position: 'top-right' });
         } else {
           setImages(prevImages => [...prevImages, ...results]);
+          setTotalPages(totalPages);
           setLoadMore(page < totalPages);
           if (page >= totalPages) {
             setLoadMore(false);
@@ -87,7 +90,6 @@ export default function App() {
           }
           toast.success('Search successful!', { position: 'top-right' });
         }
-        setTotalPages(totalPages);
       } catch (error) {
         toast.error('Oops... Something went wrong. Please, try again.', { position: 'top-right' });
         setError(true);
@@ -103,10 +105,16 @@ export default function App() {
     <div className={css.container}>
       <SearchBar onSearch={handleSearch} />
       {loading && <Loader loading={loading} />}
-      {error && <Error message={error.toString()} />}
+      {error && <Error message="Oops... Something went wrong." />}
       {images.length > 0 && <ImageGallery images={images} onImageClick={handleImageModal} />}
       {loadMore && <LoadMoreBtn onClick={handleMoreBtn} />}
-      <ImageModal modalData={modalData} isModalOpen={imageModal} onModalClose={handleModalClose} />
+      {modalData && (
+        <ImageModal
+          modalData={modalData}
+          isModalOpen={imageModal}
+          onModalClose={handleModalClose}
+        />
+      )}
       <Toaster />
     </div>
   );

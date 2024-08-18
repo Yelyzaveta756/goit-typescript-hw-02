@@ -14,8 +14,7 @@ export interface ImageResult {
 
 interface FetchImagesResponse {
   results: ImageResult[];
-  totalPages: number;
-  
+  total_pages: number; 
 }
 
 export const fetchImages = async (topic: string, currentPage: number): Promise<{ results: ImageResult[], totalPages: number }> => {
@@ -30,8 +29,5 @@ export const fetchImages = async (topic: string, currentPage: number): Promise<{
     }
   });
 
-  return {
-    results: response.data.results,
-    totalPages: response.data.totalPages
-  };
+  return { results: response.data.results, totalPages: response.data.total_pages };
 }
