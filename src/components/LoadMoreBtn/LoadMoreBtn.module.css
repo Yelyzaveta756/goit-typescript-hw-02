@@ -1,0 +1,21 @@
+.loadMoreBtn {
+    background-color: rgb(172, 172, 233);
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    font-size: 1em;
+    font-weight: 500;
+    font-family: inherit;
+    transition: background-color 0.4s;
+}
+
+.loadMoreBtn:hover {
+    background-color: rgb(130, 130, 226)
+}
+
+.containerMoreBtn {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
